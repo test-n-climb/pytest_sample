@@ -1,0 +1,3 @@
+[integration]
+base_url=some_url
+some_secret={"arn":"some_arn"}

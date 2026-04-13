@@ -1,0 +1,10 @@
+.idea
+.venv
+*.pyc*
+allure-results
+allure-report
+venv
+.env
+__pycache__/
+.pytest_cache/
+config/integration.ini
