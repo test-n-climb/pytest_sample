@@ -32,6 +32,16 @@ poe test_task_api
 poe report
 ```
 
+## Running in GitHub Actions
+
+Tests can also be triggered manually via GitHub Actions without any local setup.
+
+1. Go to **Actions → Run Tests** in the repository
+2. Click **Run workflow**
+3. Select the branch and click **Run workflow**
+
+The workflow starts the mock service automatically and runs the full test suite against it.
+
 ## Project Structure
 
 ```
