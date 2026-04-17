@@ -78,3 +78,4 @@ class TestCreateTask:
 
         assert response_body.success is False
         assert response_body.errors is not None
+        assert response_body.data is None
