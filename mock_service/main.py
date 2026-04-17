@@ -1,3 +1,4 @@
+
 from http import HTTPStatus
 
 from flask import Flask, g, request
@@ -18,7 +19,7 @@ task_db_client = TaskDbClient()
 @app.errorhandler(Exception)
 def handle_exception(e):
     return (
-        ResponseContent(success=False, errors="Internal Server Error").model_dump_json(),
+        ResponseContent(success=False, errors=[{"msg": "Internal Server Error"}]).model_dump_json(),
         HTTPStatus.INTERNAL_SERVER_ERROR,
     )
 
@@ -41,7 +42,11 @@ def create_task():
     try:
         task_input = PostTaskInput(**request.get_json())
     except ValidationError as e:
-        return ResponseContent(success=False, errors=str(e.errors())).model_dump_json(), HTTPStatus.UNPROCESSABLE_ENTITY
+        clean_errors = [
+            {k: (list(v) if k == "loc" else v) for k, v in err.items() if k not in ("ctx", "url")}
+            for err in e.errors()
+        ]
+        return ResponseContent(success=False, errors=clean_errors).model_dump_json(), HTTPStatus.UNPROCESSABLE_ENTITY
 
     created_task = CreateTaskResolver(task_input, get_db()).resolve()
 
@@ -53,7 +58,7 @@ def get_task(task_id: int):
     task = GetTaskResolver(task_id, get_db()).resolve()
 
     if task is None:
-        return ResponseContent(success=False, errors="Task not found").model_dump_json(), HTTPStatus.NOT_FOUND
+        return ResponseContent(success=False, errors=[{"msg": "Task not found"}]).model_dump_json(), HTTPStatus.NOT_FOUND
 
     return ResponseContent(success=True, data=task.model_dump_json()).model_dump_json(), HTTPStatus.OK
 
