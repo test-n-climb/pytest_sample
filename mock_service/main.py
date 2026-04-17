@@ -1,4 +1,3 @@
-
 from http import HTTPStatus
 
 from flask import Flask, g, request
@@ -43,8 +42,7 @@ def create_task():
         task_input = PostTaskInput(**request.get_json())
     except ValidationError as e:
         clean_errors = [
-            {k: (list(v) if k == "loc" else v) for k, v in err.items() if k not in ("ctx", "url")}
-            for err in e.errors()
+            {k: (list(v) if k == "loc" else v) for k, v in err.items() if k not in ("ctx", "url")} for err in e.errors()
         ]
         return ResponseContent(success=False, errors=clean_errors).model_dump_json(), HTTPStatus.UNPROCESSABLE_ENTITY
 
@@ -58,7 +56,10 @@ def get_task(task_id: int):
     task = GetTaskResolver(task_id, get_db()).resolve()
 
     if task is None:
-        return ResponseContent(success=False, errors=[{"msg": "Task not found"}]).model_dump_json(), HTTPStatus.NOT_FOUND
+        return (
+            ResponseContent(success=False, errors=[{"msg": "Task not found"}]).model_dump_json(),
+            HTTPStatus.NOT_FOUND,
+        )
 
     return ResponseContent(success=True, data=task.model_dump_json()).model_dump_json(), HTTPStatus.OK
 
