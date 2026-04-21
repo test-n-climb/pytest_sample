@@ -14,7 +14,7 @@ class Task(BaseModel):
     created_at: datetime
 
 
-class TaskApiErrors(StrEnum):
+class TaskApiError(StrEnum):
     DEADLINE_IN_PAST = "Value error, deadline must be in the future"
     DEADLINE_TOO_FAR = "Value error, deadline must be within 100 days from now"
 
